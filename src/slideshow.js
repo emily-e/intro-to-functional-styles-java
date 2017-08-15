@@ -19,19 +19,21 @@ var slideshow = function() {
 	var getProgressives = function($page) {
 		var keys = [];
 		var data = {};
-		$page.find("[data-reveal]").each(function () {
-			var index = $(this).attr('data-reveal');
+		var revealUs = $page.querySelector("[data-reveal]") || [];
+		Array.prototype.forEach.call(revealUs, function (element) {
+			var index = element.getAttribute('data-reveal');
 			if(!(index in data)) {
 				data[index] = { key: index, elements: [], hide: [] };
 				keys.push(index);
 			}
-			data[index].elements.push($(this));
+			data[index].elements.push(element);
 		});
-		$page.find("[data-hide]").each(function () {
+		var hideUs = $page.querySelector("[data-hide]") || [];
+		Array.prototype.forEach.call(hideUs, function (element) {
 			console.log('hide');
-			var index = $(this).attr('data-hide');
+			var index = element.getAttribute('data-hide');
 			console.log(index);
-			data[index].hide.push($(this));
+			data[index].hide.push(element);
 		});
 		var ret = [];
 		keys = keys.sort();
@@ -46,10 +48,10 @@ var slideshow = function() {
 		while(k >= 0) {
 			var group = progressives[k];
 			for(var el in group.elements) {
-				group.elements[el].hide();
+				group.elements[el].style.display = 'none';
 			}
 			for(var el in group.hide) {
-				group.hide[el].show();
+				group.hide[el].style.display = '';
 			}
 			k--;
 		}
@@ -59,24 +61,36 @@ var slideshow = function() {
 		for(var k in progressives) {
 			var group = progressives[k];
 			for(var el in group.elements) {
-				group.elements[el].show();
+				group.elements[el].style.display = '';
 			}
 			for(var el in group.hide) {
-				group.hide[el].hide();
+				group.hide[el].style.display = 'none';
 			}
 		}
 	};
 
-	var $divs = $('body > div');
-	var $notes = $('.speaker-notes');
-	$divs.hide();
-	$notes.hide();
+	var displayNodes = function(nodes, displayVal) {
+		Array.prototype.forEach.call(nodes, function(element, index) {
+			element.style.display = displayVal;
+		});
+	}
+	var hideNodes = function(nodes) {
+		return displayNodes(nodes, 'none');
+	}
+	var showNodes = function(nodes) {
+		return displayNodes(nodes, '');
+	}
 
-	var $currentPage = $divs.first();
+	var $divs = document.querySelectorAll('body > div');
+	var $notes = document.querySelectorAll('.speaker-notes');
+	hideNodes($divs);
+	hideNodes($notes);
+
+	var $currentPage = $divs.item(0);
 	var currentPageProgressives = getProgressives($currentPage);
 	var currentPageIndex = 0;
 	hideProgressives(currentPageProgressives);
-	$currentPage.show();
+	$currentPage.style.display = '';
 
 	var slideMode = true;
 
@@ -85,16 +99,16 @@ var slideshow = function() {
 		if (currentPageIndex < currentPageProgressives.length) {
 			var group = currentPageProgressives[currentPageIndex];
 			for(var el in group.elements) {
-				group.elements[el].show();
+				group.elements[el].style.display = '';
 			}
 			for(var el in group.hide) {
-				group.hide[el].hide();
+				group.hide[el].style.display = 'none';
 			}
 			currentPageIndex++;
-		} else if ($currentPage.next().length > 0) {
-			$currentPage.hide();
-			$currentPage = $currentPage.next();
-			$currentPage.show();
+		} else if ($currentPage.nextElementSibling) {
+			$currentPage.style.display = 'none';
+			$currentPage = $currentPage.nextElementSibling;
+			$currentPage.style.display = '';
 			currentPageProgressives = getProgressives($currentPage);
 			currentPageIndex = 0;
 			hideProgressives(currentPageProgressives);
@@ -106,15 +120,15 @@ var slideshow = function() {
 			currentPageIndex--;
 			var group = currentPageProgressives[currentPageIndex];
 			for(var el in group.elements) {
-				group.elements[el].hide();
+				group.elements[el].style.display = 'none';
 			}
 			for(var el in group.hide) {
-				group.hide[el].show();
+				group.hide[el].style.display = '';
 			}
-		} else if ($currentPage.prev().length > 0) {
-			$currentPage.hide();
-			$currentPage = $currentPage.prev();
-			$currentPage.show();
+		} else if ($currentPage.previousElementSibling) {
+			$currentPage.style.display = 'none';
+			$currentPage = $currentPage.previousElementSibling;
+			$currentPage.style.display = '';
 			currentPageProgressives = getProgressives($currentPage);
 			currentPageIndex = 0;
 			hideProgressives(currentPageProgressives);
@@ -155,19 +169,19 @@ var slideshow = function() {
 	document.addEventListener('touchmove', touchMove, false);
 	document.addEventListener('touchend', touchEnd, false);
 
-	$('body').keydown(function (evt) {
+	document.querySelector('body').addEventListener('keydown', function (evt) {
 		if(evt.keyCode == 27) {
 			if(slideMode) {
 				slideMode = false;
-				$divs.show();
-				$notes.show();
+				showNodes($divs);
+				showNodes($notes);
 				showAllProgressives(currentPageProgressives);
 			} else {
 				slideMode = true;
-				$divs.hide();
-				$notes.hide();
-				$currentPage = $divs.first();
-				$currentPage.show();
+				hideNodes($divs);
+				hideNodes($notes);
+				$currentPage = $divs.item(0);
+				$currentPage.style.display = '';
 				currentPageProgressives = getProgressives($currentPage);
 				currentPageIndex = 0;
 				hideProgressives(currentPageProgressives);
