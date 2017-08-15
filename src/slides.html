@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title></title>
+	<meta charset="UTF-8">
 	<link rel="stylesheet" href="default.min.css">
 	<style type="text/css">
 		h1 { text-align: center; }
@@ -29,14 +30,17 @@
 		}
 	</style>
 	<script src="highlight.min.js"></script>
-	<script src="jquery-1.8.2.min.js"></script>
 	<script src="slideshow.js"></script>
-	<script src="game.js"></script>
-	<script>hljs.initHighlightingOnLoad();</script>
 	<script>
-		$(document).ready(function () {
-			slideshow();
-		});
+		function ready(fn) {
+		  if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading"){
+		    fn();
+		  } else {
+		    document.addEventListener('DOMContentLoaded', fn);
+		  }
+		}
+		hljs.initHighlightingOnLoad();
+		ready(slideshow);
 	</script>
 </head>
 <body>
