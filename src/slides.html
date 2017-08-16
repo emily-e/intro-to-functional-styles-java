@@ -5,9 +5,14 @@
 	<meta charset="UTF-8">
 	<link rel="stylesheet" href="default.min.css">
 	<link rel="stylesheet" href="basic-style.css">
-	<script src="highlight.min.js"></script>
-	<script src="slideshow.js"></script>
-	<script>
+	<script type="text/javascript" src="highlight.min.js"></script>
+	<script type="text/javascript" src="slideshow.js"></script>
+	<script type="text/javascript">
+		/* Initialize highlight.js to enable syntax highlighting. The use of highlight.js is orthogonal to slideshow.js
+		and only included as a convenience. */
+		hljs.initHighlightingOnLoad();
+
+		/* Wait for the DOM to be ready to initialize the slideshow library. */
 		function ready(fn) {
 			if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading"){
 				fn();
@@ -15,7 +20,6 @@
 				document.addEventListener('DOMContentLoaded', fn);
 			}
 		}
-		hljs.initHighlightingOnLoad();
 		ready(slideshow);
 	</script>
 </head>
