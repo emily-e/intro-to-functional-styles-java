@@ -16,6 +16,18 @@
 var slideshow = function() {
 'use strict';
 
+	var displayNodes = function(nodes, displayVal) {
+		Array.prototype.forEach.call(nodes, function(element, index) {
+			element.style.display = displayVal;
+		});
+	}
+	var hideNodes = function(nodes) {
+		return displayNodes(nodes, 'none');
+	}
+	var showNodes = function(nodes) {
+		return displayNodes(nodes, '');
+	}
+
 	var getProgressives = function($page) {
 		var keys = [];
 		var data = {};
@@ -56,18 +68,6 @@ var slideshow = function() {
 			hideNodes(group.hide);
 		});
 	};
-
-	var displayNodes = function(nodes, displayVal) {
-		Array.prototype.forEach.call(nodes, function(element, index) {
-			element.style.display = displayVal;
-		});
-	}
-	var hideNodes = function(nodes) {
-		return displayNodes(nodes, 'none');
-	}
-	var showNodes = function(nodes) {
-		return displayNodes(nodes, '');
-	}
 
 	var $divs = document.querySelectorAll('body > div');
 	var $notes = document.querySelectorAll('.speaker-notes');
