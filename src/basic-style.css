@@ -1,0 +1,35 @@
+/* A basic style to use for slideshows.
+Slideshow.js does not require the use of any specific CSS classes other than .speaker-notes, in that it will hide nodes
+styled as speaker-notes in slidshow mode. */
+
+h1 { text-align: center; }
+
+h2 { text-align: center; }
+
+h3 { text-align: center; }
+
+h4 { text-align: center; }
+
+dd {
+	margin-bottom: 1em;
+	margin-top: 0.5em;
+}
+
+ul {
+	font-size: 1.2em;
+}
+.speaker-notes {
+	color: #ff0000;
+}
+
+pre {
+	white-space: pre-wrap;
+}
+
+tbody > tr:nth-child(odd) {
+	background-color: #f0f0f0;
+}
+
+tbody > tr:nth-child(even) {
+	background-color: #d0d0d0;
+}
