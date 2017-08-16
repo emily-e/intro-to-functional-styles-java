@@ -16,20 +16,12 @@
 var slideshow = function() {
 'use strict';
 
-	var querySelectorAll = function (node, query) {
-		return [].slice.call(node.querySelectorAll(query));
+	function querySelectorAll(node, query) { return [].slice.call(node.querySelectorAll(query)); }
+	function displayNodes(nodes, displayVal) {
+		nodes.forEach(function(element) { element.style.display = displayVal; });
 	}
-	var displayNodes = function(nodes, displayVal) {
-		Array.prototype.forEach.call(nodes, function(element, index) {
-			element.style.display = displayVal;
-		});
-	}
-	var hideNodes = function(nodes) {
-		return displayNodes(nodes, 'none');
-	}
-	var showNodes = function(nodes) {
-		return displayNodes(nodes, '');
-	}
+	function hideNodes(nodes) { displayNodes(nodes, 'none'); }
+	function showNodes(nodes) { displayNodes(nodes, ''); }
 
 	var getProgressives = function($page) {
 		var keys = [];
