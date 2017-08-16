@@ -44,29 +44,17 @@ var slideshow = function() {
 	};
 
 	var hideProgressives = function (progressives) {
-		var k = progressives.length - 1;
-		while(k >= 0) {
-			var group = progressives[k];
-			for(var el in group.elements) {
-				group.elements[el].style.display = 'none';
-			}
-			for(var el in group.hide) {
-				group.hide[el].style.display = '';
-			}
-			k--;
-		}
+		progressives.slice().reverse().forEach(function (group) {
+			hideNodes(group.elements);
+			showNodes(group.hide);
+		});
 	};
 
 	var showAllProgressives = function (progressives) {
-		for(var k in progressives) {
-			var group = progressives[k];
-			for(var el in group.elements) {
-				group.elements[el].style.display = '';
-			}
-			for(var el in group.hide) {
-				group.hide[el].style.display = 'none';
-			}
-		}
+		progressives.forEach(function (group) {
+			showNodes(group.elements);
+			hideNodes(group.hide);
+		});
 	};
 
 	var displayNodes = function(nodes, displayVal) {
@@ -98,12 +86,8 @@ var slideshow = function() {
 	var nextSlide = function () {
 		if (currentPageIndex < currentPageProgressives.length) {
 			var group = currentPageProgressives[currentPageIndex];
-			for(var el in group.elements) {
-				group.elements[el].style.display = '';
-			}
-			for(var el in group.hide) {
-				group.hide[el].style.display = 'none';
-			}
+			showNodes(group.elements);
+			hideNodes(group.hide);
 			currentPageIndex++;
 		} else if ($currentPage.nextElementSibling) {
 			$currentPage.style.display = 'none';
@@ -119,12 +103,8 @@ var slideshow = function() {
 		if (currentPageIndex > 0) {
 			currentPageIndex--;
 			var group = currentPageProgressives[currentPageIndex];
-			for(var el in group.elements) {
-				group.elements[el].style.display = 'none';
-			}
-			for(var el in group.hide) {
-				group.hide[el].style.display = '';
-			}
+			hideNodes(group.elements);
+			showNodes(group.hide);
 		} else if ($currentPage.previousElementSibling) {
 			$currentPage.style.display = 'none';
 			$currentPage = $currentPage.previousElementSibling;
