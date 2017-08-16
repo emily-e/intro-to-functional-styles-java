@@ -61,6 +61,14 @@ var slideshow = function() {
 		});
 	};
 
+	// Slideshow State.
+	var $divs = querySelectorAll(document, 'body > div');
+	var $notes = querySelectorAll(document, '.speaker-notes');
+	var $currentPage = $divs[0];
+	var currentPageIndex = 0;
+	var currentPageProgressives = null;
+	var eventHandler = null;
+
 	var showSlide = function ($currentPage) {
 		$currentPage.style.display = '';
 		currentPageProgressives = getProgressives($currentPage);
@@ -68,22 +76,22 @@ var slideshow = function() {
 		hideProgressives(currentPageProgressives);
 	};
 
-	// Slideshow State.
-	var $divs = querySelectorAll(document, 'body > div');
-	var $notes = querySelectorAll(document, '.speaker-notes');
-	var $currentPage = $divs[0];
-	var currentPageIndex = 0;
-	var currentPageProgressives = null;
-	var slideMode = true;
+	var showAll = function () {
+		eventHandler = documentMode;
+		$divs.forEach(function ($div) {
+			showSlide($div);
+			showAllProgressives(currentPageProgressives);
+		});
+		showNodes($notes);
+	}
 
 	var start = function() {
-		slideMode = true;
+		eventHandler = slideMode;
 		hideNodes($divs);
 		hideNodes($notes);
 		$currentPage = $divs[0];
 		showSlide($currentPage);
 	}
-	start();
 
 	var nextSlide = function () {
 		if (currentPageIndex < currentPageProgressives.length) {
@@ -111,6 +119,20 @@ var slideshow = function() {
 		}
 	}
 
+	var documentMode = {
+		mode: start,
+		next: function () {},
+		prev: function() {}
+	};
+
+	var slideMode = {
+		mode: showAll,
+		next: nextSlide,
+		prev: prevSlide
+	};
+
+	start();
+
 	var x = 0;
 	var y = 0;
 	var dx = 0;
@@ -134,9 +156,9 @@ var slideshow = function() {
 		started = false;
 		if (Math.abs(dx) > (1.8 * Math.abs(dy))) {
 			if(dx > 0) {
-				nextSlide();
+				eventHandler.next();
 			} else {
-				prevSlide();
+				eventHandler.prev();
 			}
 		}
 	}
@@ -146,23 +168,11 @@ var slideshow = function() {
 	document.addEventListener('touchend', touchEnd, false);
 
 	document.querySelector('body').addEventListener('keydown', function (evt) {
-		if(evt.keyCode == 27) {
-			if(slideMode) {
-				slideMode = false;
-				$divs.forEach(function ($div) {
-					showSlide($div);
-					showAllProgressives(currentPageProgressives);
-				});
-				showNodes($notes);
-			} else {
-				start();
-			}
-		} else if(slideMode && (evt.keyCode == 37)) {
-			// left
-			prevSlide();
-		} else if(slideMode && (evt.keyCode == 39)) {
-			// right
-			nextSlide();
-		}
+		// escape
+		if(evt.keyCode == 27) { eventHandler.mode(); }
+		// left
+		if(evt.keyCode == 37) { eventHandler.prev(); }
+		// right
+		if(evt.keyCode == 39) { eventHandler.next(); }
 	});
 };
