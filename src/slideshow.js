@@ -23,7 +23,7 @@ var slideshow = function() {
 	function hideNodes(nodes) { displayNodes(nodes, 'none'); }
 	function showNodes(nodes) { displayNodes(nodes, ''); }
 
-	var getProgressives = function($page) {
+	function getProgressives($page) {
 		var keys = [];
 		var data = {};
 		var addIndex = function (index) {
@@ -45,21 +45,21 @@ var slideshow = function() {
 		});
 
 		return keys.sort().map(function (k) { return data[k]; });
-	};
+	}
 
-	var hideProgressives = function (progressives) {
+	function hideProgressives(progressives) {
 		progressives.slice().reverse().forEach(function (group) {
 			hideNodes(group.elements);
 			showNodes(group.hide);
 		});
-	};
+	}
 
-	var showAllProgressives = function (progressives) {
+	function showAllProgressives(progressives) {
 		progressives.forEach(function (group) {
 			showNodes(group.elements);
 			hideNodes(group.hide);
 		});
-	};
+	}
 
 	// Slideshow State.
 	var $divs = querySelectorAll(document, 'body > div');
