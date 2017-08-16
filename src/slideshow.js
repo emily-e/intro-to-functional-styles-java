@@ -69,19 +69,29 @@ var slideshow = function() {
 		});
 	};
 
+	var showSlide = function ($currentPage) {
+		$currentPage.style.display = '';
+		currentPageProgressives = getProgressives($currentPage);
+		currentPageIndex = 0;
+		hideProgressives(currentPageProgressives);
+	};
+
+	// Slideshow State.
 	var $divs = querySelectorAll(document, 'body > div');
-	var $notes = document.querySelectorAll('.speaker-notes');
-	hideNodes($divs);
-	hideNodes($notes);
-
+	var $notes = querySelectorAll(document, '.speaker-notes');
 	var $currentPage = $divs[0];
-	var currentPageProgressives = getProgressives($currentPage);
 	var currentPageIndex = 0;
-	hideProgressives(currentPageProgressives);
-	$currentPage.style.display = '';
-
+	var currentPageProgressives = null;
 	var slideMode = true;
 
+	var start = function() {
+		slideMode = true;
+		hideNodes($divs);
+		hideNodes($notes);
+		$currentPage = $divs[0];
+		showSlide($currentPage);
+	}
+	start();
 
 	var nextSlide = function () {
 		if (currentPageIndex < currentPageProgressives.length) {
@@ -92,10 +102,7 @@ var slideshow = function() {
 		} else if ($currentPage.nextElementSibling) {
 			$currentPage.style.display = 'none';
 			$currentPage = $currentPage.nextElementSibling;
-			$currentPage.style.display = '';
-			currentPageProgressives = getProgressives($currentPage);
-			currentPageIndex = 0;
-			hideProgressives(currentPageProgressives);
+			showSlide($currentPage);
 		}
 	};
 
@@ -108,10 +115,7 @@ var slideshow = function() {
 		} else if ($currentPage.previousElementSibling) {
 			$currentPage.style.display = 'none';
 			$currentPage = $currentPage.previousElementSibling;
-			$currentPage.style.display = '';
-			currentPageProgressives = getProgressives($currentPage);
-			currentPageIndex = 0;
-			hideProgressives(currentPageProgressives);
+			showSlide($currentPage);
 		}
 	}
 
@@ -153,18 +157,13 @@ var slideshow = function() {
 		if(evt.keyCode == 27) {
 			if(slideMode) {
 				slideMode = false;
-				showNodes($divs);
+				$divs.forEach(function ($div) {
+					showSlide($div);
+					showAllProgressives(currentPageProgressives);
+				});
 				showNodes($notes);
-				showAllProgressives(currentPageProgressives);
 			} else {
-				slideMode = true;
-				hideNodes($divs);
-				hideNodes($notes);
-				$currentPage = $divs[0];
-				$currentPage.style.display = '';
-				currentPageProgressives = getProgressives($currentPage);
-				currentPageIndex = 0;
-				hideProgressives(currentPageProgressives);
+				start();
 			}
 		} else if(slideMode && (evt.keyCode == 37)) {
 			// left
