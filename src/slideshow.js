@@ -19,7 +19,7 @@ var slideshow = function() {
 	var getProgressives = function($page) {
 		var keys = [];
 		var data = {};
-		var revealUs = $page.querySelector("[data-reveal]") || [];
+		var revealUs = $page.querySelectorAll("[data-reveal]") || [];
 		Array.prototype.forEach.call(revealUs, function (element) {
 			var index = element.getAttribute('data-reveal');
 			if(!(index in data)) {
@@ -28,7 +28,7 @@ var slideshow = function() {
 			}
 			data[index].elements.push(element);
 		});
-		var hideUs = $page.querySelector("[data-hide]") || [];
+		var hideUs = $page.querySelectorAll("[data-hide]") || [];
 		Array.prototype.forEach.call(hideUs, function (element) {
 			console.log('hide');
 			var index = element.getAttribute('data-hide');
