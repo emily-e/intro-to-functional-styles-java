@@ -16,6 +16,9 @@
 var slideshow = function() {
 'use strict';
 
+	var querySelectorAll = function (node, query) {
+		return [].slice.call(node.querySelectorAll(query));
+	}
 	var displayNodes = function(nodes, displayVal) {
 		Array.prototype.forEach.call(nodes, function(element, index) {
 			element.style.display = displayVal;
@@ -31,28 +34,25 @@ var slideshow = function() {
 	var getProgressives = function($page) {
 		var keys = [];
 		var data = {};
-		var revealUs = $page.querySelectorAll("[data-reveal]") || [];
-		Array.prototype.forEach.call(revealUs, function (element) {
-			var index = element.getAttribute('data-reveal');
+		var addIndex = function (index) {
 			if(!(index in data)) {
 				data[index] = { key: index, elements: [], hide: [] };
 				keys.push(index);
 			}
-			data[index].elements.push(element);
+			return data[index];
+		};
+
+		querySelectorAll($page, "[data-reveal]").forEach(function (element) {
+			var index = element.getAttribute('data-reveal');
+			addIndex(index).elements.push(element);
 		});
-		var hideUs = $page.querySelectorAll("[data-hide]") || [];
-		Array.prototype.forEach.call(hideUs, function (element) {
-			console.log('hide');
+
+		querySelectorAll($page, "[data-hide]").forEach(function (element) {
 			var index = element.getAttribute('data-hide');
-			console.log(index);
-			data[index].hide.push(element);
+			addIndex(index).hide.push(element);
 		});
-		var ret = [];
-		keys = keys.sort();
-		for(var k in keys) {
-			ret.push(data[keys[k]]);
-		}
-		return ret;
+
+		return keys.sort().map(function (k) { return data[k]; });
 	};
 
 	var hideProgressives = function (progressives) {
@@ -69,12 +69,12 @@ var slideshow = function() {
 		});
 	};
 
-	var $divs = document.querySelectorAll('body > div');
+	var $divs = querySelectorAll(document, 'body > div');
 	var $notes = document.querySelectorAll('.speaker-notes');
 	hideNodes($divs);
 	hideNodes($notes);
 
-	var $currentPage = $divs.item(0);
+	var $currentPage = $divs[0];
 	var currentPageProgressives = getProgressives($currentPage);
 	var currentPageIndex = 0;
 	hideProgressives(currentPageProgressives);
@@ -160,7 +160,7 @@ var slideshow = function() {
 				slideMode = true;
 				hideNodes($divs);
 				hideNodes($notes);
-				$currentPage = $divs.item(0);
+				$currentPage = $divs[0];
 				$currentPage.style.display = '';
 				currentPageProgressives = getProgressives($currentPage);
 				currentPageIndex = 0;
