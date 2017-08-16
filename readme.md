@@ -6,16 +6,20 @@ Slideshow libraries for HTML slide shows are a dime a dozen. A lot of them are p
 
 It is possible to fork this repo and pull upstream changes as this library is improved. First, create a fork for your presentation as follows:
 
-```git clone https://github.com/emily-e/slideshow.js.git
+```
+git clone https://github.com/emily-e/slideshow.js.git
 mv slideshow.js my_presentation
 cd my_presentation
 git remote set-url origin https://github.com/myUserName/my_presentation
 git remote add upstream https://github.com/emily-e/slideshow.js.git
 git push origin master
-git push --all```
+git push --all
+```
 
 As you work on your presentation, to merge upstream improvements:
 
-```git pull upstream master```
+```
+git pull upstream master
+```
 
 This might result in merge conflicts with the template `slides.html`, but otherwise, it should usually be a clean merge.
