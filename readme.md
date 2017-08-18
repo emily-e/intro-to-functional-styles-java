@@ -10,7 +10,7 @@ It is possible to fork this repo and pull upstream changes as this library is im
 git clone https://github.com/emily-e/slideshow.js.git my_presentation
 cd my_presentation
 git remote set-url origin https://github.com/myUserName/my_presentation
-git remote add upstream https://github.com/emily-e/slideshow.js.git
+git remote add slideshow-js https://github.com/emily-e/slideshow.js.git
 git push origin master
 git push --all
 ```
@@ -18,7 +18,23 @@ git push --all
 As you work on your presentation, to merge upstream improvements:
 
 ```
-git pull upstream master
+git pull slideshow-js master
 ```
 
 This might result in merge conflicts with the template `slides.html`, but otherwise, it should usually be a clean merge.
+
+# Pulling this repo into an existing project.
+
+You can also add this repo as an upstream with git > 2.9.0. In your project folder:
+
+```
+git remote add slideshow-js https://github.com/emily-e/slideshow.js.git
+git fetch slideshow-js
+git merge --allow-unrelated-histories slideshow-js/master
+```
+
+And merge updates of course with:
+
+```
+git pull slideshow-js master
+```
