@@ -29,15 +29,105 @@
 
 <div class="slide">
 	<h1>An Introduction to Functional styles in Java and on the JVM</h1>
-	<h3>Emily Estes</h3>
+	<h3>Emily Estes, <a href="https://www.metanotion.com/">Metanotion Software</a></h3>
 	<h4>date @ <a href="">place</a></h4>
-	<h4>Slides and source code @ <a href="https://github.com/emily-e/intro-to-functional-styles-java">https://github.com/emily-e/intro-to-functional-styles-java/a></h4>
+	<h4>Slides and source code @ <a href="https://github.com/emily-e/intro-to-functional-styles-java">https://github.com/emily-e/intro-to-functional-styles-java</a></h4>
 	<p>To navigate: left arrow - previous slide, right arrow - next slide, escape - toggle slide show mode.</p>
+	<div class="speaker-notes">
+		<em>Abstract</em>
+		<p>Functional programming seems like a fad these days, many languagues are adding features from category theory and other erudite traditions, even Java has added lambda's, streams and optionals. But these ideas are neither new nor a fad, and many of them had seeds in Java from the beginning.</p>
+
+		<em>Description</em>
+		<p>"We were not out to win over the Lisp programmers; we were after the C++ programmers. We managed to drag a lot of them about halfway to Lisp." - Guy Steele, co-author of the Java specification. In this talk, we will explore how functional styles can be applied to Java to create better object oriented designs, and how recent additions to Java expedite these patterns. In addition we will look at other JVM languages that have more direct roots in the lambda calculus with better support for algebraic and categorical desgn patterns. We will also discuss how these functional styles can enhance correctness with tools such as monoids, phantom types, trampolines, and algebraic data types and how to represent these constructs in Java.</p>
+	</div>
 </div>
 
 
 
 <div class="slide">
+	<h1>Question: How do you write a big a program?</h1>
+	<h1 data-reveal="a">Answer: By combining smaller programs.</h1>
+	<h2 data-reveal="b">In other words - programs are built by composition from smaller programs.</h2>
+</div>
+
+
+
+<div class="slide">
+	<h1>Functions</h1>
+<pre data-hide="a"><code class="javascript">function add(x,y) {
+	return x + y;
+}
+
+function multiply(a,b) {
+	return a *  b;
+}
+
+function doublePlusOne(val) {
+	return add(multiply(val, 2), 1);
+}</code></pre>
+
+<pre data-reveal="a"><code class="javascript">function compose(f, g) {
+	return function (x) { return f(g(x)); };
+}
+
+function identity(x) {
+	return x;
+}</code></pre>
+
+<pre data-reveal="a"><code class="javascript">function curry(f, x) {
+	return function (y) {
+		return f(x,y);
+	};
+}
+
+function choose(predicateFunction, trueFunction, falseFunction) {
+	return function (x) {
+		if(predicateFunction(x)) {
+			return trueFunction(x);
+		} else {
+			return falseFunction(x);
+		}
+	};
+}
+</code></pre>
+</div>
+
+
+<div class="slide">
+<h1>A story about functional thinking</h1>
+<blockquote><p>The venerable master Qc Na was walking with his student, Anton.  Hoping to prompt the master into a discussion, Anton said "Master, I have heard that objects are a very good thing - is this true?"  Qc Na looked pityingly at his student and replied, "Foolish pupil - objects are merely a poor man's closures."</p>
+
+<p>Chastised, Anton took his leave from his master and returned to his cell, intent on studying closures.  He carefully read the entire "Lambda: The Ultimate..." series of papers and its cousins, and implemented a small Scheme interpreter with a closure-based object system.  He learned much, and looked forward to informing his master of his progress.</p>
+
+<p>On his next walk with Qc Na, Anton attempted to impress his master by saying "Master, I have diligently studied the matter, and now understand that objects are truly a poor man's closures."  Qc Na responded by hitting Anton with his stick, saying "When will you learn? Closures are a poor man's object."  At that moment, Anton became enlightened.</p>
+</blockquote>
+
+<span data-reveal="a">Excertp from an email by Anton van Straaten to Guy Steele on the Lightweight Languages mailing list, June, 2003. - <a href="https://people.csail.mit.edu/gregs/ll1-discuss-archive-html/msg03277.html">https://people.csail.mit.edu/gregs/ll1-discuss-archive-html/msg03277.html</a></span>
+</div>
+
+
+
+<div class="slide">
+	<h1>Objects as functions</h1>
+</div>
+
+
+<div class="slide">
+	<h1>The study of computation</h1>
+	<blockquote><p>Computer science is no more about computers than astronomy is about telescopes.</p>
+	- apocryphcal, often attributed to Edsger Dijkstra</blockquote>
+	<blockquote data-reveal="a"><p>What would we like our children- the general public of the future--to learn about computer science in schools? We need to do away with the myth that computer science is about computers. Computer science is no more about computers than astronomy is about telescopes, biology is about microscopes or chemistry is about beakers and test tubes. Science is not about tools, it is about how we use them and what we find out when we do.</p>
+	- from a paper by Fellows, Parberry in 1993</blockquote>
+</div>
+
+<div class="slide">
+
+</div>
+
+<div class="slide">
+https://code.joejag.com/2016/anti-if-the-missing-patterns.html
+https://people.csail.mit.edu/gregs/ll1-discuss-archive-html/msg03277.html
+
 	<p data-hide="a">We're going to make some points.</p>
 	<ul>
 		<li data-reveal="a">Show point 1</li>
