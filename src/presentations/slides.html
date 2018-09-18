@@ -22,6 +22,9 @@
 		}
 		ready(slideshow);
 	</script>
+	<style>
+		body { font-family: sans-serif; }
+	</style>
 </head>
 <body>
 
@@ -48,48 +51,76 @@
 	<h1>Question: How do you write a big a program?</h1>
 	<h1 data-reveal="a">Answer: By combining smaller programs.</h1>
 	<h2 data-reveal="b">In other words - programs are built by composition from smaller programs.</h2>
+	<h2 data-reveal="c">Ideally, ways of composing programs should preserve properties of those smaller programs.</h2>
+	<h2 data-reveal="d">One interesting property is "correctness".</h2>
 </div>
 
 
 
 <div class="slide">
-	<h1>Functions</h1>
-<pre data-hide="a"><code class="javascript">function add(x,y) {
-	return x + y;
-}
+	<h1>What is Functional Programming?</h1>
+	<h1 data-reveal="a">Programming with Functions!</h1>
+	<h2 data-reveal="b">(right?)</h2>
+</div>
 
-function multiply(a,b) {
-	return a *  b;
-}
 
-function doublePlusOne(val) {
-	return add(multiply(val, 2), 1);
-}</code></pre>
+<div class="slide">
+	<h1>Mathematical Functions</h1>
+	<blockquote>
+		<p>A function is a relation that uniquely associates members of one set with members of another set. More formally, a function from <code>A</code> to <code>B</code> is an object <code>f</code> such that every <code>a</code> in <code>A</code> is uniquely associated with an object <code>f(a)</code> in <code>B</code>.</p>
+		<a href="http://mathworld.wolfram.com/Function.html">Function definition from Wolfram</a>
+	</blockquote>
 
-<pre data-reveal="a"><code class="javascript">function compose(f, g) {
-	return function (x) { return f(g(x)); };
-}
+	<img src="function.jpg" style="display: block; margin: 0 auto; width: 40%" />
+</div>
 
-function identity(x) {
-	return x;
-}</code></pre>
 
-<pre data-reveal="a"><code class="javascript">function curry(f, x) {
-	return function (y) {
-		return f(x,y);
-	};
-}
 
-function choose(predicateFunction, trueFunction, falseFunction) {
-	return function (x) {
-		if(predicateFunction(x)) {
-			return trueFunction(x);
-		} else {
-			return falseFunction(x);
-		}
-	};
-}
-</code></pre>
+<div class="slide">
+	<img src="billy-mays.jpg" style="display: block; margin: 0 auto; width: 40%" />
+</div>
+
+
+<div class="slide">
+	<h1>A brief historical digression</h1>
+	<ul>
+		<li>1903 - Bertrand Russell creates a mathematical type system to resolve paradoxes in his set theory.</li>
+		<li>1933 - Kurt Goedel defines General Recursive functions</li>
+		<li>1936 - Alonzo Church creates the Lambda Calculus</li>
+		<li>1936 - Alan Turing created Turing Machines (including the Universal Turing Machine)</li>
+		<li>All of these mechanisms of defining "Computable Functions" are equivalent.</li>
+		<li><strong>The Church Turing Thesis is the statement that these defintions are equivalent to the informal notion of an "effectively calculable functions".</strong></li>
+		<li>1934/1969 - Haskell Curry and William Howard connect logic and typed functions in the lambda calculus with eponymous Curry-Howard correspondance.</li>
+		<li>1958 - John McCarthy created the programming language Lisp and based it directly on Church's Lambda Calculus for it's semantic model.</li>
+		<li>1972 - Per Martin-L&ouml;f creates Intuitionist Type Theory as a constructivist foundation for Mathematics (carrying on in the tradition of Russell).</li>
+		<li>1972/1974 - John Reynolds and Jean-Yves Girard create the polymorphic lambda calculus (System F) extending the power of existing type theories.</li>
+		<li>1973 - ML (Meta Language) was created by Robin Milner. Originally created to be used as a proof assistant.</li>
+	</ul>
+</div>
+
+
+
+<div class="slide">
+	<h1>Wat?</h1>
+</div>
+
+
+<div class="slide">
+	<h1>So what is Functional Programming and what does all that have to do with it?</h1>
+	<h3 data-reveal="a">1977 - John Backus (of Algol fame, and the "B" in BNF) receives a Turing Award and delivers an address titled...</h3>
+	<h1 data-reveal="b">Can Programming Be Liberated from the von Neumann Style? A Functional Style and Its Algebra of Programs.</h1>
+	<blockquote data-reveal="c"><p>An alternative functional style of programming is founded on the use of combining forms for creating programs. Functional programs deal with structured data, are often nonrepetitive and nonrecursive, are hierarchically constructed, do not name their arguments, and do not require the complex machinery of procedure declarations to become generally applicable. Combining forms can use high level programs to build still higher level ones in a style not possible in conventional languages.</p>
+
+	<p>Associated with the functional style of programming is an <strong>algebra of programs</strong> whose variables range over programs and whose operations are combining forms. This algebra can be used to transform programs and to solve equations whose "unknowns" are programs in much the same way one transforms equations in high school algebra. These transformations are given by algebraic laws and are carried out in the same language in which programs are written. <strong>Combining forms are chosen not only for their programming power but also for the power of their associated algebraic laws. General theorems of the algebra give the detailed behavior and termination conditions for large classes of programs.</strong></p>
+	John Backus, 1977
+	</blockquote>
+</div>
+
+
+<div class="slide">
+	<h1>Functional Programming (according to Emily)</h1>
+	<blockquote data-reveal="a">Functional Programming is a <strong>school of research</strong> that studies what is computable, <strong>how to express those computations</strong>(the theory of programming languages) and <strong>reasoning about combinations of computations</strong> using mathematics, in particular <strong>Abstract Algebra, Category Theory, Constructivist (Intuitionistic) Mathematics, and the Lambda Calculus</strong>.</blockquote>
+
 </div>
 
 
@@ -102,7 +133,7 @@ function choose(predicateFunction, trueFunction, falseFunction) {
 <p>On his next walk with Qc Na, Anton attempted to impress his master by saying "Master, I have diligently studied the matter, and now understand that objects are truly a poor man's closures."  Qc Na responded by hitting Anton with his stick, saying "When will you learn? Closures are a poor man's object."  At that moment, Anton became enlightened.</p>
 </blockquote>
 
-<span data-reveal="a">Excertp from an email by Anton van Straaten to Guy Steele on the Lightweight Languages mailing list, June, 2003. - <a href="https://people.csail.mit.edu/gregs/ll1-discuss-archive-html/msg03277.html">https://people.csail.mit.edu/gregs/ll1-discuss-archive-html/msg03277.html</a></span>
+<span data-reveal="a">Excerpt from an email by Anton van Straaten to Guy Steele on the Lightweight Languages mailing list, June, 2003. - <a href="https://people.csail.mit.edu/gregs/ll1-discuss-archive-html/msg03277.html">https://people.csail.mit.edu/gregs/ll1-discuss-archive-html/msg03277.html</a></span>
 </div>
 
 
@@ -144,6 +175,10 @@ https://people.csail.mit.edu/gregs/ll1-discuss-archive-html/msg03277.html
 <div class="slide">
 <h1>References</h1>
 <h4>Slides and source code @ <a href="https://github.com/emily-e/intro-to-functional-styles-java">https://github.com/emily-e/intro-to-functional-styles-java</a></h4>
+	<ul>
+		<li><a href="https://dl.acm.org/citation.cfm?id=359579">Can Programming Be Liberated from the von Neumann Style? A Functional Style and Its Algebra of Programs.<a></li>
+		<li><a href="https://people.csail.mit.edu/gregs/ll1-discuss-archive-html/msg03277.html">RE: What's so cool about Scheme?</a></li>
+	</ul>
 </div>
 
 
