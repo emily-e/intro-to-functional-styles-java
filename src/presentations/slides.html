@@ -506,7 +506,23 @@ Iterator&lt;C> finalList = new MapList&lt;>(functionBtoC, intermediateList);
 Iterator&lt;C> finalList = new MapList&lt;>(new Compose&lt;>(functionAtoB, functionBtoC), list);
 </code></pre>
 <h3 data-reveal="d">This is called "Stream Fusion" and is an example of an alegebraic law.</h3>
+<h3 data-reveal="e">Also note that this code would work in Java 5.</h3>
 </div>
+
+
+
+<div class="slide">
+	<h1>Now with Streams</h1>
+<pre><code class="java">import java.util.stream.StreamSupport;
+// ...
+Iterable&lt;A> list = someList;
+Iterator&lt;C> finalList = StreamSupport.stream(list.spliterator(), false)
+  .map(functionAtoB)
+  .map(functionBtoC)
+  .iterator();
+</code></pre>
+</div>
+
 
 
 <div class="slide">
