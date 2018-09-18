@@ -41,7 +41,7 @@
 		<p>Functional programming seems like a fad these days, many languagues are adding features from category theory and other erudite traditions, even Java has added lambda's, streams and optionals. But these ideas are neither new nor a fad, and many of them had seeds in Java from the beginning.</p>
 
 		<em>Description</em>
-		<p>"We were not out to win over the Lisp programmers; we were after the C++ programmers. We managed to drag a lot of them about halfway to Lisp." - Guy Steele, co-author of the Java specification. In this talk, we will explore how functional styles can be applied to Java to create better object oriented designs, and how recent additions to Java expedite these patterns. In addition we will look at other JVM languages that have more direct roots in the lambda calculus with better support for algebraic and categorical desgn patterns. We will also discuss how these functional styles can enhance correctness with tools such as monoids, phantom types, trampolines, and algebraic data types and how to represent these constructs in Java.</p>
+		<p>"We were not out to win over the Lisp programmers; we were after the C++ programmers. We managed to drag a lot of them about halfway to Lisp." - Guy Steele, co-author of the Java specification. In this talk, we will explore how functional styles can be applied to Java to create better object oriented designs, and how recent additions to Java expedite these patterns. In addition we will look at other JVM languages that have more direct roots in the lambda calculus with better support for algebraic and categorical design patterns. We will also discuss how these functional styles can enhance correctness with tools such as monoids, phantom types, trampolines, and algebraic data types and how to represent these constructs in Java.</p>
 	</div>
 </div>
 
@@ -64,6 +64,7 @@
 </div>
 
 
+
 <div class="slide">
 	<h1>Mathematical Functions</h1>
 	<blockquote>
@@ -81,20 +82,24 @@
 </div>
 
 
+
 <div class="slide">
 	<h1>A brief historical digression</h1>
 	<ul>
-		<li>1903 - Bertrand Russell creates a mathematical type system to resolve paradoxes in his set theory.</li>
 		<li>1933 - Kurt Goedel defines General Recursive functions</li>
 		<li>1936 - Alonzo Church creates the Lambda Calculus</li>
 		<li>1936 - Alan Turing created Turing Machines (including the Universal Turing Machine)</li>
-		<li>All of these mechanisms of defining "Computable Functions" are equivalent.</li>
-		<li><strong>The Church Turing Thesis is the statement that these defintions are equivalent to the informal notion of an "effectively calculable functions".</strong></li>
+	</ul>
+	All of these mechanisms of defining "Computable Functions" are equivalent. <strong>The Church Turing Thesis is the statement that these defintions are equivalent to the informal notion of an "effectively calculable functions".</strong>
+	<ul>
+		<li>1903 - Bertrand Russell creates a mathematical type system to resolve paradoxes in his set theory.</li>
 		<li>1934/1969 - Haskell Curry and William Howard connect logic and typed functions in the lambda calculus with eponymous Curry-Howard correspondance.</li>
 		<li>1958 - John McCarthy created the programming language Lisp and based it directly on Church's Lambda Calculus for it's semantic model.</li>
 		<li>1972 - Per Martin-L&ouml;f creates Intuitionist Type Theory as a constructivist foundation for Mathematics (carrying on in the tradition of Russell).</li>
 		<li>1972/1974 - John Reynolds and Jean-Yves Girard create the polymorphic lambda calculus (System F) extending the power of existing type theories.</li>
 		<li>1973 - ML (Meta Language) was created by Robin Milner. Originally created to be used as a proof assistant.</li>
+		<li>1975 - Guy Steele and Gerald Sussman create Scheme attempting to implement the Actor Model in the lambda calculus - Lexical scoping/lexical closures were discovered as a part of this work. The paper titles all started with the phrase "Lambda: The Ultimate..."</li>
+		<li>1990 - Haskell was created by Philip Wadler, Simon Peyton Jones, and others to study non-strict programs in the lambda calculus.</li>
 	</ul>
 </div>
 
@@ -103,6 +108,7 @@
 <div class="slide">
 	<h1>Wat?</h1>
 </div>
+
 
 
 <div class="slide">
@@ -117,11 +123,79 @@
 </div>
 
 
+
 <div class="slide">
 	<h1>Functional Programming (according to Emily)</h1>
 	<blockquote data-reveal="a">Functional Programming is a <strong>school of research</strong> that studies what is computable, <strong>how to express those computations</strong>(the theory of programming languages) and <strong>reasoning about combinations of computations</strong> using mathematics, in particular <strong>Abstract Algebra, Category Theory, Constructivist (Intuitionistic) Mathematics, and the Lambda Calculus</strong>.</blockquote>
-
 </div>
+
+
+
+<div class="slide">
+	<h1>Question: How do you write a big a program?</h1>
+	<h1 data-reveal="a">Answer: By combining smaller programs... Algebraically</h1>
+	<h2 data-reveal="b">In other words - programs are built by composition from smaller programs... "Combining forms can use high level programs to build still higher level ones in a style not possible in conventional languages."</h2>
+	<h2 data-reveal="c">Ideally, ways of composing programs should preserve properties of those smaller programs... "Combining forms are chosen not only for their programming power but also for the power of their associated algebraic laws."</h2>
+	<h2 data-reveal="d">One interesting property is "correctness"... "General theorems of the algebra give the detailed behavior and termination conditions for large classes of programs."</h2>
+</div>
+
+
+
+<div class="slide">
+	<h1>Mathematical Functions</h1>
+	<blockquote>
+		<p>A function is a relation that uniquely associates members of one set with members of another set. [...]</p>
+	</blockquote>
+
+	<h2 data-reveal="a">Things that can be modeled as mathematical functions</h2>
+	<ul data-reveal="a">
+		<li data-reveal="b">Tables in a Relational database using a primary key or unique constraint as the "input".</li>
+		<li data-reveal="c">Arrays.</li>
+		<li data-reveal="d"><code>java.util.Map</code> instances, or any other "key/value" dictionary.</li>
+		<li data-reveal="e">Functions - without side effects.</li>
+		<li data-reveal="f">Methods - if we take care of side effects.</li>
+		<li data-reveal="g">Entire object instances - if we take care of side effects.</li>
+		<li data-reveal="h">Entire programs - if we take care of side effects.</li>
+	</ul>
+</div>
+
+
+
+<div class="slide">
+	<h1>Objects as Functions</h1>
+<pre><code class="java">public interface Function {
+  public Object apply(Object value);
+}
+
+public class Compose implements Function {
+  private Function f,g;
+  public Compose(Function f, Function g) {
+    this.f = f;
+    this.g = g;
+  }
+  public Object apply(Object value) {
+    return g.apply(f.apply(value));
+  }
+}
+
+public class IsEven implements Function {
+  public Object apply(Object value) {
+    if (((((Integer) value).intValue()) % 2) == 0) {
+      return Boolean.TRUE;
+    } else {
+      return Boolean.FALSE;
+    }
+  }
+}</code></pre>
+<h3 data-reveal="a">This code is valid in Java 1</h3>
+<pre data-reveal="b"><code class="java">Function addOne = new Function() {
+  public Object apply(Object value) {
+    return new Integer((((Integer) value).intValue()) + 1);
+  }
+};</code></pre>
+<h3 data-reveal="c">Anonymous Inner Classes were added in Java 1.1 in 1997.</h3>
+</div>
+
 
 
 <div class="slide">
@@ -139,17 +213,156 @@
 
 
 <div class="slide">
-	<h1>Objects as functions</h1>
+	<h1>Once more... with Generics</h1>
+<pre><code class="java">public interface Function&lt;A,B> {
+  public B apply(A value);
+}
+
+public class Compose&lt;A,B,C> implements Function&lt;A,C> {
+  private Function&lt;A,B> f;
+  private Function&lt;B,C> g;
+  public Compose(Function&lt;A,B> f, Function&lt;B,C> g) {
+    this.f = f;
+    this.g = g;
+  }
+  public C apply(A value) {
+    return g.apply(f.apply(value));
+  }
+}
+
+public class IsEven implements Function&lt;Integer,Boolean> {
+  public Boolean apply(Integer value) {
+    if (((value.intValue()) % 2) == 0) {
+      return true
+    } else {
+      return false;
+    }
+  }
+}</code></pre>
+<pre><code class="java">Function&lt;Integer,Integer> addOne = new Function&lt;Integer, Integer>() {
+  public Integer apply(Integer value) {
+    return value.intValue() + 1;
+  }
+};</code></pre>
+<h3 data-reveal="c">Generics were added in Java 5 in 2004.</h3>
 </div>
+
 
 
 <div class="slide">
-	<h1>The study of computation</h1>
-	<blockquote><p>Computer science is no more about computers than astronomy is about telescopes.</p>
-	- apocryphcal, often attributed to Edsger Dijkstra</blockquote>
-	<blockquote data-reveal="a"><p>What would we like our children- the general public of the future--to learn about computer science in schools? We need to do away with the myth that computer science is about computers. Computer science is no more about computers than astronomy is about telescopes, biology is about microscopes or chemistry is about beakers and test tubes. Science is not about tools, it is about how we use them and what we find out when we do.</p>
-	- from a paper by Fellows, Parberry in 1993</blockquote>
+	<h1>Lambdas and type inference</h1>
+<pre><code class="java">public interface Function&lt;A,B> {
+  public B apply(A value);
+}
+
+public class Compose&lt;A,B,C> implements Function&lt;A,C> {
+  private Function&lt;A,B> f;
+  private Function&lt;B,C> g;
+  public Compose(Function&lt;A,B> f, Function&lt;B,C> g) {
+    this.f = f;
+    this.g = g;
+  }
+  public C apply(A value) {
+    return g.apply(f.apply(value));
+  }
+}
+
+public class IsEven implements Function&lt;Integer,Boolean> {
+  public Boolean apply(Integer value) {
+    if (((value.intValue()) % 2) == 0) {
+      return true
+    } else {
+      return false;
+    }
+  }
+}</code></pre>
+<pre><code class="java">Function&lt;Integer,Integer> addOne = value -> value.intValue() + 1;</code></pre>
+<h3 data-reveal="c">Local limited type inference was first added in Java 7 in 2011, Lambdas were added in Java 8 in 2014.</h3>
 </div>
+
+
+
+<div class="slide">
+<h1>Guy Steele on the difficulty of getting a radically new programming language accepted...</h1>
+<h1 data-reveal="a">... like Java</h1>
+<blockquote data-reveal="b"><p>There is another point.  Java had a number of other glaring faults and omissions in 1995, and we fixed those before releasing it in 1996.  (Because we fixed them, you may never have known what we fixed.)  And we had finite resources, facing an apparently finite window or opportunity. We had to make hard choices about what to fix before releasing it.  Method call overload resolution was a mess; we fixed it.  Generic types were debated, but didn't make it in. Unicode support was added; tail calls were not.  And so on.</p>
+
+<p>And you're right: <strong>we were not out to win over the Lisp programmers; we were after the C++ programmers.  We managed to drag a lot of them about halfway to Lisp.</strong>  Aren't you happy?</p>
+</blockquote>
+
+<span data-reveal="b">Excerpt from an email by Guy Steele on the Lightweight Languages mailing list, August, 2003. - <a href="http://people.csail.mit.edu/gregs/ll1-discuss-archive-html/msg04045.html">http://people.csail.mit.edu/gregs/ll1-discuss-archive-html/msg04045.html</a></span>
+
+<h1 data-reveal="c">The Generic Java project was started in 1998...</h1>
+<h2 data-reveal="d">... by Philip Wadler, Martin Odersky, and Gilad Bracha, among others.</h2>
+<ul data-reveal="d">
+	<li>Gilad Bracha was later involved in the Dart language at Google.</li>
+	<li>Martin Odersky started work on creating Scala in 2001, the first release was in 2004...</li>
+</ul>
+</div>
+
+
+
+<div class="slide">
+	<h1>Constructors</h1>
+<blockquote data-reveal="a"><p>"Yup. So we stopped selling those schematics and started selling <strong>hammer-factory-building</strong> factories. Each <strong>hammer factory factory</strong> is built for you by the top experts in the hammer factory factory business, so you don't need to worry about all the details that go into building a factory. Yet you still get all the benefits of having your own customized hammer factory, churning out your own customized hammers, according to your own specific hammer designs."</p>
+	<span>Excerpt from the forum post <a href="http://discuss.joelonsoftware.com/default.asp?joel.3.219431.12">Why I Hate Frameworks</a>, September 2005</span>
+</blockquote>
+
+<blockquote data-reveal="b"><p>Suppose we have a constructor C(x) and code that creates objects by calling it. What happens if we find that we actually need to return an instance of a class other than C? For example, we might want to lazily load data from secondary storage, and need to return some sort of placeholder object that behaves just like a C, but isn't? What if we want to avoid reallocating a fresh object, and use a cached one instead?</p>
+
+<p>So it's clear that you don't want to publicize your constructors to the clients of your API, as all they can do is tie you down.</p>
+
+<p>The standard recommended solution is to use a <strong>static factory</strong>. This however, does nothing to help the other victims of constructors - their callers. As a consumer of an API, you don't want to use constructors: they induce a tight coupling between your code and specific implementations. You can't abstract over static methods, just as you can't abstract over constructors. In both cases, there is no object that is the target of the operation and a conventional interface declaration cannot describe it. The absence of an object means that constructors don't have the benefits objects bring - dynamic binding of method calls chief among these. Which is why constructors and static methods don't work well, and incidentally, aren't object oriented.</p>
+	<span>Excerpt from <a href="https://gbracha.blogspot.com/2007/06/constructors-considered-harmful.html">Constructors Considered Harmful</a>, by Gilad Bracha, June, 2007.</span>
+</blockquote>
+</div>
+
+
+
+<div class="slide">
+	<h1>Constructors and Factories</h1>
+<pre><code class="java">public class Addition {
+  private int x, y;
+  public Addition(int x, int y) {
+    this.x = x;
+    this.y = y;
+  }
+  public int add() { return x + y; }
+}
+
+public class AdditionFactory {
+  private int x;
+  public AdditionFactory(int x) { this.x = x; }
+  public Addition getAddition(int y) { return new Addition(x,y); }
+}
+
+public class AdditionFactoryFactory {
+  public AdditionFactory getAdditionFactory(int x) { return new AdditionFactory(x); }
+}
+
+public class AdditionFactoryFactoryFactory {
+  public static AdditionFactoryFactory getAdditionFactoryFactory() {
+    return new AdditionFactoryFactory();
+  }
+}</code></pre>
+<pre><code class="java">System.out.println(AdditionFactoryFactoryFactory()
+  .getAdditionFactoryFactory()
+  .getAdditionFactory(1);
+  .getAddition(2)
+  .add());
+</pre></code>
+</div>
+
+
+
+<div class="slide">
+	<h1>Constructors and Factories</h1>
+<pre><code class="java">final Function&lt;Integer, Function&lt;Integer, Integer>> additionFactoryFactory = x -> y -> x + y;
+System.out.println(additionFactoryFactory
+  .apply(1)
+  .apply(2));
+</code></pre>
+
 
 <div class="slide">
 
