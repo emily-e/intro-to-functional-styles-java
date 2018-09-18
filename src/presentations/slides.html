@@ -345,7 +345,7 @@ public class AdditionFactoryFactoryFactory {
     return new AdditionFactoryFactory();
   }
 }</code></pre>
-<pre><code class="java">System.out.println(AdditionFactoryFactoryFactory()
+<pre><code class="java">System.out.println(AdditionFactoryFactoryFactory
   .getAdditionFactoryFactory()
   .getAdditionFactory(1);
   .getAddition(2)
@@ -445,7 +445,7 @@ normalizeText(str -> str.toUpperCase(), str -> System.out.println(str));</code><
 	<ul>
 		<li data-reveal="b">A Monoid has a binary operation that we will call <code>+</code> that operates on a type of value.</li>
 		<li data-reveal="c">This operation is associative: <code>(a + b) + c</code> must be equal to <code>a + (b + c)</code>.</li>
-		<li data-reveal="d">There is a value in the type that is called the identity that we will <code>0</code>.</li>
+		<li data-reveal="d">There is a value in the type that is called the identity that we will call <code>0</code>.</li>
 		<li data-reveal="e">The identity must follow this rule: <code>0 + a = a</code> and <code>a + 0 = a</code>.</li>
 	</ul>
 
@@ -477,7 +477,7 @@ normalizeText(str -> str.toUpperCase(), str -> System.out.println(str));</code><
   }
 }
 
-public class Identity&lt;A implements Function&lt;A,A> {
+public class Identity&lt;A> implements Function&lt;A,A> {
   public A apply(A value) { return value; }
 }</code></pre>
 </div>
