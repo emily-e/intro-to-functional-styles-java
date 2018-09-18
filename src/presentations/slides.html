@@ -303,7 +303,7 @@ public class IsEven implements Function&lt;Integer,Boolean> {
 
 
 <div class="slide">
-	<h1>Constructors</h1>
+	<h1>Constructors and Factories</h1>
 <blockquote data-reveal="a"><p>"Yup. So we stopped selling those schematics and started selling <strong>hammer-factory-building</strong> factories. Each <strong>hammer factory factory</strong> is built for you by the top experts in the hammer factory factory business, so you don't need to worry about all the details that go into building a factory. Yet you still get all the benefits of having your own customized hammer factory, churning out your own customized hammers, according to your own specific hammer designs."</p>
 	<span>Excerpt from the forum post <a href="http://discuss.joelonsoftware.com/default.asp?joel.3.219431.12">Why I Hate Frameworks</a>, September 2005</span>
 </blockquote>
@@ -358,29 +358,74 @@ public class AdditionFactoryFactoryFactory {
 <div class="slide">
 	<h1>Constructors and Factories</h1>
 <pre><code class="java">final Function&lt;Integer, Function&lt;Integer, Integer>> additionFactoryFactory = x -> y -> x + y;
-System.out.println(additionFactoryFactory
+</code></pre>
+<pre><code class="java">System.out.println(additionFactoryFactory
   .apply(1)
   .apply(2));
 </code></pre>
-
-
-<div class="slide">
-
 </div>
 
-<div class="slide">
-https://code.joejag.com/2016/anti-if-the-missing-patterns.html
-https://people.csail.mit.edu/gregs/ll1-discuss-archive-html/msg03277.html
 
-	<p data-hide="a">We're going to make some points.</p>
-	<ul>
-		<li data-reveal="a">Show point 1</li>
-		<li data-reveal="b">Show point 2</li>
-		<li data-reveal="c">Show point 3</li>
-	</ul>
+
+<div class="slide">
+	<h1>If</h1>
+<pre><code class="java">public String normalizeText(String text, boolean upperCase, boolean echo) {
+  String newText = text;
+  if(upperCase) {
+    newText = newText.toUpperCase();
+  } else {
+    newText = newText.toLowerCase();
+  }
+  if(echo) {
+    System.out.println(newText);
+  }
+  return newText;
+}
+</code></pre>
+<h3 data-reveal="a">Fun fact each if-statement doubles the Cyclomatic complexity of your code.</h3>
 </div>
 
+
+
 <div class="slide">
+	<h1>If - I had a lambda</h1>
+<pre><code class="java">import java.util.function.Function;
+import java.util.function.Consumer;
+
+public String normalizeText(String text, Function&lt;String, String> changeCase, Consumer&lt;String> logger) {
+  String newText = changeCase.apply(text);
+  logger.accept(newText);
+  return newText;
+}
+// ...
+normalizeText(str -> str.toUpperCase(), str -> System.out.println(str));</code></pre>
+</div>
+
+
+
+<div class="slide">
+	<h1>Try-with-resources</h1>
+<pre><code class="java">public &lt;R> tryWithResources(Supplier&lt;Closeable> open, Function&lt;Closeable, R> work) {
+  Closeable resource = null;
+  try {
+    resource = open.get();
+    return work.apply(resource);
+  } finally {
+    if(resource != null) { resource.close(); }
+  }
+}</code></pre>
+<h3 data-reveal="a">But we already have try-with-resources as of Java 7...</h3>
+
+<pre data-reveal="b"><code class="java">public &lt;R> I transaction(Connection conn, Function&lt;Connection,R> query) throws SQLException {
+  try {
+    conn.setAutoCommit(false);
+    return query.apply(conn);
+  } catch (final Exception e) {
+    conn.rollback();
+  } finally {
+    conn.setAutoCommit(true);
+  }
+}</code></pre>
 </div>
 
 
@@ -391,6 +436,7 @@ https://people.csail.mit.edu/gregs/ll1-discuss-archive-html/msg03277.html
 	<ul>
 		<li><a href="https://dl.acm.org/citation.cfm?id=359579">Can Programming Be Liberated from the von Neumann Style? A Functional Style and Its Algebra of Programs.<a></li>
 		<li><a href="https://people.csail.mit.edu/gregs/ll1-discuss-archive-html/msg03277.html">RE: What's so cool about Scheme?</a></li>
+		<li><a href="http://degoes.net/articles/destroy-all-ifs">Destroy All Ifs - A Perspective from Functional Programming</a></li>
 	</ul>
 </div>
 
