@@ -33,7 +33,7 @@
 <div class="slide">
 	<h1>An Introduction to Functional styles in Java and on the JVM</h1>
 	<h3>Emily Estes, <a href="https://www.metanotion.com/">Metanotion Software</a></h3>
-	<h4>date @ <a href="">place</a></h4>
+	<h4>September 18th, 2018 @ <a href="https://www.meetup.com/KnoxJava">KnoxJava Meetup</a></h4>
 	<h4>Slides and source code @ <a href="https://github.com/emily-e/intro-to-functional-styles-java">https://github.com/emily-e/intro-to-functional-styles-java</a></h4>
 	<p>To navigate: left arrow - previous slide, right arrow - next slide, escape - toggle slide show mode.</p>
 	<div class="speaker-notes">
@@ -405,7 +405,17 @@ normalizeText(str -> str.toUpperCase(), str -> System.out.println(str));</code><
 
 <div class="slide">
 	<h1>Try-with-resources</h1>
-<pre><code class="java">public &lt;R> tryWithResources(Supplier&lt;Closeable> open, Function&lt;Closeable, R> work) {
+<pre><code class="java">try (InputStream in = java.nio.files.Files.newInputStream(file)) {
+  // Read the file.
+}
+// in.close() automatically called when we exit the block, even via throwing an exception.
+</code></pre>
+<h3>Try with resources was added in Java 7 in 2011, along with the <code>java.io.Closeable</code> interface.</h3>
+</div>
+
+<div class="slide">
+	<h1>Try-with-lambda</h1>
+<pre><code class="java">public &lt;R> R tryWithResources(Supplier&lt;Closeable> open, Function&lt;Closeable, R> work) {
   Closeable resource = null;
   try {
     resource = open.get();
@@ -414,9 +424,9 @@ normalizeText(str -> str.toUpperCase(), str -> System.out.println(str));</code><
     if(resource != null) { resource.close(); }
   }
 }</code></pre>
-<h3 data-reveal="a">But we already have try-with-resources as of Java 7...</h3>
+<h3 data-reveal="a">This could be valid Java 5... but we already have try-with-resources as of Java 7</h3>
 
-<pre data-reveal="b"><code class="java">public &lt;R> I transaction(Connection conn, Function&lt;Connection,R> query) throws SQLException {
+<pre data-reveal="b"><code class="java">public &lt;R> R tryTransaction(Connection conn, Function&lt;Connection,R> query) throws SQLException {
   try {
     conn.setAutoCommit(false);
     return query.apply(conn);
@@ -429,6 +439,75 @@ normalizeText(str -> str.toUpperCase(), str -> System.out.println(str));</code><
 </div>
 
 
+<div class="slide">
+	<h1>Some Algebra</h1>
+	<h2 data-reveal="a">Monoids are a common algebraic object</h2>
+	<ul>
+		<li data-reveal="b">A Monoid has a binary operation that we will call <code>+</code> that operates on a type of value.</li>
+		<li data-reveal="c">This operation is associative: <code>(a + b) + c</code> must be equal to <code>a + (b + c)</code>.</li>
+		<li data-reveal="d">There is a value in the type that is called the identity that we will <code>0</code>.</li>
+		<li data-reveal="e">The identity must follow this rule: <code>0 + a = a</code> and <code>a + 0 = a</code>.</li>
+	</ul>
+
+	<h2 data-reveal="f">Some examples</h2>
+	<ul>
+		<li data-reveal="g">Addition on integers, with 0 as the identity.</li>
+		<li data-reveal="h">Multiplication on integers, with 1 as the identity.</li>
+		<li data-reveal="i">The <code>min(a,b)</code> function on the integers, with positive infinity as the identity (or <code>Integer.MAX_VALUE</code>).</li>
+		<li data-reveal="j">String concatenation on strings, with <code>""</code>(the empty string) as the identity.</li>
+		<li data-reveal="k">List appending, with the empty list as the identity.</li>
+		<li data-reveal="l">Composition of functions: <code>f &compfn; g = f(g(x))</code> with the identity function: <code>id(x) = x</code> as the identity.</li>
+		<li data-reveal="m">Database transactions with the "empty transaction" as the identity.</li>
+	</ul>
+</div>
+
+
+
+<div class="slide">
+	<h1>Composition</h1>
+<pre><code class="java">public class Compose&lt;A,B,C> implements Function&lt;A,C> {
+  private Function&lt;A,B> f;
+  private Function&lt;B,C> g;
+  public Compose(Function&lt;A,B> f, Function&lt;B,C> g) {
+    this.f = f;
+    this.g = g;
+  }
+  public C apply(A value) {
+    return g.apply(f.apply(value));
+  }
+}
+
+public class Identity&lt;A implements Function&lt;A,A> {
+  public A apply(A value) { return value; }
+}</code></pre>
+</div>
+
+
+<div class="slide">
+	<h1>Maps</h1>
+<pre><code class="java">public class MapList&lt;A,B> implements Iterator&lt;B> {
+  private Function &lt;A,B> f;
+  private Iterator&lt;A> list;
+  public MapList(Function &lt;A,B> f, Iterator&lt;A> list) {
+    this.f = f;
+    this.list = list;
+  }
+  public boolean hasNext() { return list.hasNext(); }
+  public B next() { return f.apply(list.next()); }
+}</code></pre>
+
+<h2 data-reveal="a">Some more Algebra</h2>
+<pre data-reveal="a"><code class="java">Iterator&lt;A> list = someList;
+Iterator&lt;B> intermediateList = new MapList&lt;>(functionAtoB, list);
+Iterator&lt;C> finalList = new MapList&lt;>(functionBtoC, intermediateList);
+</pre></code>
+<h3 data-reveal="b">What if our list has a trillion elements...</h3>
+<pre data-reveal="c"><code class="java">
+Iterator&lt;C> finalList = new MapList&lt;>(new Compose&lt;>(functionAtoB, functionBtoC), list);
+</code></pre>
+<h3 data-reveal="d">This is called "Stream Fusion" and is an example of an alegebraic law.</h3>
+</div>
+
 
 <div class="slide">
 <h1>References</h1>
@@ -436,10 +515,12 @@ normalizeText(str -> str.toUpperCase(), str -> System.out.println(str));</code><
 	<ul>
 		<li><a href="https://dl.acm.org/citation.cfm?id=359579">Can Programming Be Liberated from the von Neumann Style? A Functional Style and Its Algebra of Programs.<a></li>
 		<li><a href="https://people.csail.mit.edu/gregs/ll1-discuss-archive-html/msg03277.html">RE: What's so cool about Scheme?</a></li>
+		<li><a href="http://people.csail.mit.edu/gregs/ll1-discuss-archive-html/msg04045.html">Re: bindings and assignments (was: Re: continuations)</a></li>
+		<li><a href="http://discuss.joelonsoftware.com/default.asp?joel.3.219431.12">Why I Hate Frameworks</a></li>
+		<li><a href="https://gbracha.blogspot.com/2007/06/constructors-considered-harmful.html">Constructors Considered Harmful</a></li>
 		<li><a href="http://degoes.net/articles/destroy-all-ifs">Destroy All Ifs - A Perspective from Functional Programming</a></li>
 	</ul>
 </div>
-
 
 </body>
 </html>
